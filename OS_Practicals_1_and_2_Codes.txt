@@ -1,0 +1,297 @@
+OPERATING SYSTEM PRACTICALS 1 & 2
+Language: Python
+
+============================================================
+PRACTICAL 1 - THREADING
+============================================================
+
+1(A) LOWERCASE AND UPPERCASE LETTERS USING THREADS
+
+import threading
+from time import sleep
+
+def upper(x):
+    print("Upper:", x, ":", chr(x))
+
+def lower(x):
+    print("Lower:", x, ":", chr(x))
+
+def print_thread(x):
+    if x <= 90:
+        upper(x)
+    else:
+        lower(x)
+    sleep(0.2)
+
+threads = []
+for i in range(65, 123):
+    t = threading.Thread(target=print_thread, args=(i,))
+    threads.append(t)
+
+for t in threads:
+    t.start()
+
+for t in threads:
+    t.join()
+
+
+1(B) EVEN AND ODD NUMBERS USING THREADS
+
+import threading
+from time import sleep
+
+def even(x):
+    print("Even:", x)
+
+def odd(x):
+    print("Odd:", x)
+
+def print_thread(x):
+    if x % 2 == 0:
+        even(x)
+    else:
+        odd(x)
+    sleep(0.2)
+
+threads = []
+for i in range(1, 21):
+    t = threading.Thread(target=print_thread, args=(i,))
+    threads.append(t)
+
+for t in threads:
+    t.start()
+
+for t in threads:
+    t.join()
+
+
+1(C) FIBONACCI SERIES AND NUMBERS USING TWO THREADS
+
+from threading import Thread
+from time import sleep
+
+def fibonacci():
+    n = 30
+    first, second, next_term = 0, 1, 0
+    while next_term < n:
+        print("Fibonacci:", next_term)
+        sleep(0.3)
+        first = second
+        second = next_term
+        next_term = first + second
+
+def numbers():
+    for i in range(1, 11):
+        print("Number:", i)
+        sleep(0.2)
+
+print("Multithreading")
+t1 = Thread(name="Numbers", target=numbers)
+t2 = Thread(name="Fibonacci", target=fibonacci)
+t1.start()
+t2.start()
+t1.join()
+t2.join()
+
+
+1(D) PALINDROME AND ARMSTRONG NUMBERS USING THREADS
+
+from threading import Thread
+from time import sleep
+
+def palindrome():
+    for num in range(1655, 1665):
+        original = num
+        reverse = 0
+        n = num
+        while n > 0:
+            reverse = reverse * 10 + n % 10
+            n //= 10
+
+        if original == reverse:
+            print("Palindrome:", original)
+        else:
+            print("Not palindrome:", original)
+        sleep(0.3)
+
+def armstrong():
+    for num in range(150, 161):
+        original = num
+        total = 0
+        n = num
+        while n > 0:
+            digit = n % 10
+            total += digit ** 3
+            n //= 10
+
+        if original == total:
+            print("Armstrong:", original)
+        else:
+            print("Not an Armstrong:", original)
+        sleep(0.3)
+
+t1 = Thread(target=palindrome)
+t2 = Thread(target=armstrong)
+t1.start()
+t2.start()
+t1.join()
+t2.join()
+
+
+1(E) REVERSE OF NUMBERS AND SQUARES USING THREADS
+
+from threading import Thread
+from time import sleep
+
+def reverse_numbers():
+    for num in range(20, 25):
+        n = num
+        reverse = 0
+        while n > 0:
+            reverse = reverse * 10 + n % 10
+            n //= 10
+        print("Reverse of", num, "is", reverse)
+        sleep(0.2)
+
+def squares():
+    for i in range(35, 40):
+        print("Square of", i, "is", i * i)
+        sleep(0.2)
+
+t1 = Thread(target=reverse_numbers)
+t2 = Thread(target=squares)
+t1.start()
+t2.start()
+t1.join()
+t2.join()
+
+
+============================================================
+PRACTICAL 2 - MESSAGE PASSING AND SHARED MEMORY
+============================================================
+
+2(A) MESSAGE PASSING USING MULTIPROCESSING QUEUES
+    (Parent sends a number; child returns its square)
+
+from multiprocessing import Process, Queue
+
+def child_process(to_child, from_child):
+    number = to_child.get()
+    print("Child received number:", number)
+    result = number * number
+    print("Child sending value:", result)
+    from_child.put(result)
+
+if __name__ == "__main__":
+    to_child = Queue()
+    from_child = Queue()
+    to_child.put(6)
+    print("Parent: sent number = 6")
+
+    p = Process(target=child_process, args=(to_child, from_child))
+    p.start()
+    result = from_child.get()
+    print("Parent: got squared result =", result)
+    p.join()
+
+
+2(B) MESSAGE PASSING - PRODUCER AND CONSUMER THREADS
+
+import threading
+import queue
+import time
+import random
+
+message_queue = queue.Queue(maxsize=10)
+
+class ProducerThread(threading.Thread):
+    def run(self):
+        messages = ["message 1", "message 2", "message 3", "message 4"]
+        for msg in messages:
+            time.sleep(random.random())
+            message_queue.put(msg)
+            print("Produced:", msg)
+
+class ConsumerThread(threading.Thread):
+    def run(self):
+        for _ in range(4):
+            msg = message_queue.get()
+            time.sleep(random.random())
+            print("Consumed:", msg)
+            message_queue.task_done()
+
+producer = ProducerThread()
+consumer = ConsumerThread()
+producer.start()
+consumer.start()
+producer.join()
+consumer.join()
+
+
+2(C) SHARED MEMORY USING MULTIPROCESSING VALUE
+    (Child doubles the shared value)
+
+import multiprocessing
+
+def child_process(shared_data):
+    print("Child: received number =", shared_data.value)
+    shared_data.value *= 2
+    print("Child: double value =", shared_data.value)
+
+if __name__ == "__main__":
+    shared_data = multiprocessing.Value('i', 10)
+    print("Parent: sending number =", shared_data.value)
+
+    p = multiprocessing.Process(target=child_process, args=(shared_data,))
+    p.start()
+    p.join()
+
+    print("Parent: got result from child =", shared_data.value)
+
+
+2(D) PRODUCER-CONSUMER USING THREADING CONDITION
+
+import threading
+import time
+import random
+
+items = []
+max_num = 10
+condition = threading.Condition()
+
+class ProducerThread(threading.Thread):
+    def run(self):
+        global items
+        for _ in range(10):
+            with condition:
+                while len(items) >= max_num:
+                    print("Queue is full. Producer is waiting.")
+                    condition.wait()
+
+                num = random.randint(1, 100)
+                items.append(num)
+                print("Produced:", num)
+                condition.notify_all()
+            time.sleep(random.random())
+
+class ConsumerThread(threading.Thread):
+    def run(self):
+        global items
+        for _ in range(10):
+            with condition:
+                while not items:
+                    print("Queue is empty. Consumer is waiting.")
+                    condition.wait()
+
+                num = items.pop(0)
+                print("Consumed:", num)
+                condition.notify_all()
+            time.sleep(random.random())
+
+if __name__ == "__main__":
+    producer = ProducerThread()
+    consumer = ConsumerThread()
+    producer.start()
+    consumer.start()
+    producer.join()
+    consumer.join()

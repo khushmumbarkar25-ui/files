@@ -1,0 +1,292 @@
+JAVA PRACTICALS 1 & 2
+Language: Java
+Save each program in a file whose name matches its public class.
+
+============================================================
+PRACTICAL 1 - ENCAPSULATION AND OPERATORS
+============================================================
+
+1(A) RECTANGLE AREA USING ENCAPSULATION
+
+class Rectangle {
+    private int width;
+    private int height;
+
+    public void setData(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    public int area() {
+        return width * height;
+    }
+}
+
+public class AreaDemo {
+    public static void main(String[] args) {
+        Rectangle r = new Rectangle();
+        r.setData(10, 10);
+        System.out.println("The area is " + r.area());
+    }
+}
+
+
+1(B) AVERAGE OF THREE SUBJECTS USING A CLASS
+
+import java.util.Scanner;
+
+class Student {
+    int physics, chemistry, maths;
+
+    void getData(int p, int c, int m) {
+        physics = p;
+        chemistry = c;
+        maths = m;
+    }
+
+    int average() {
+        return (physics + chemistry + maths) / 3;
+    }
+}
+
+public class StudentAverage {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Student s = new Student();
+
+        System.out.print("Enter Physics marks: ");
+        int p = sc.nextInt();
+        System.out.print("Enter Chemistry marks: ");
+        int c = sc.nextInt();
+        System.out.print("Enter Maths marks: ");
+        int m = sc.nextInt();
+
+        s.getData(p, c, m);
+        System.out.println("The average of 3 subjects is " + s.average());
+        sc.close();
+    }
+}
+
+
+1(C) RELATIONAL, LOGICAL AND ARITHMETIC OPERATORS
+
+import java.util.Scanner;
+
+class Relational {
+    void operator(int a, int b) {
+        if (a > b)
+            System.out.println("Value of A is greater");
+        else if (b > a)
+            System.out.println("Value of B is greater");
+        else
+            System.out.println("Both are equal");
+    }
+}
+
+class Logical {
+    void operator(int a, int b) {
+        if (a == 100 && b == 100)
+            System.out.println("Both match the condition");
+        else
+            System.out.println("Both might have different values");
+    }
+}
+
+class Arithmetic {
+    void operator(int a, int b) {
+        System.out.println("Addition of A and B: " + (a + b));
+    }
+}
+
+public class OperatorDemo {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter value of A: ");
+        int a = sc.nextInt();
+        System.out.print("Enter value of B: ");
+        int b = sc.nextInt();
+
+        Relational r = new Relational();
+        Logical l = new Logical();
+        Arithmetic ar = new Arithmetic();
+
+        r.operator(a, b);
+        l.operator(a, b);
+        ar.operator(a, b);
+        sc.close();
+    }
+}
+
+
+============================================================
+PRACTICAL 2 - POLYMORPHISM AND METHOD OVERLOADING
+============================================================
+
+2(A) EMPLOYEE SELECTION USING MARKS AND SWITCH
+
+import java.util.Scanner;
+
+class Posting {
+    void employee(int customerCare, int aptitude, int technical, int interview) {
+        int total = customerCare + aptitude + technical + interview;
+        int code;
+
+        if (total >= 80)
+            code = 1;
+        else if (total >= 70)
+            code = 2;
+        else if (total >= 60)
+            code = 3;
+        else
+            code = 4;
+
+        switch (code) {
+            case 1:
+                System.out.println("Selected as programmer");
+                break;
+            case 2:
+                System.out.println("Selected as team leader");
+                break;
+            case 3:
+                System.out.println("Selected as project manager");
+                break;
+            default:
+                System.out.println("Not selected");
+        }
+    }
+}
+
+public class PostingDemo {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter marks for customer care: ");
+        int a = sc.nextInt();
+        System.out.print("Enter marks for aptitude: ");
+        int b = sc.nextInt();
+        System.out.print("Enter marks for technical test: ");
+        int c = sc.nextInt();
+        System.out.print("Enter marks for interview: ");
+        int d = sc.nextInt();
+
+        Posting p = new Posting();
+        p.employee(a, b, c, d);
+        sc.close();
+    }
+}
+
+
+2(B) METHOD OVERLOADING - DISCOUNT CALCULATOR
+
+import java.util.Scanner;
+
+class DiscountCalculator {
+    double getDiscount(double price) {
+        return price * 0.05;
+    }
+
+    double getDiscount(double price, String customerType) {
+        double discount = 0.0;
+        if (customerType.equalsIgnoreCase("regular"))
+            discount = 0.05;
+        else if (customerType.equalsIgnoreCase("premium"))
+            discount = 0.10;
+        else if (customerType.equalsIgnoreCase("VIP"))
+            discount = 0.15;
+        return price * discount;
+    }
+
+    double getDiscount(double price, String customerType, String season) {
+        double discount = 0.0;
+        if (season.equalsIgnoreCase("festive"))
+            discount += 0.10;
+
+        if (customerType.equalsIgnoreCase("regular"))
+            discount += 0.05;
+        else if (customerType.equalsIgnoreCase("premium"))
+            discount += 0.10;
+        else if (customerType.equalsIgnoreCase("VIP"))
+            discount += 0.15;
+
+        return price * Math.min(discount, 0.50);
+    }
+}
+
+public class DiscountDemo {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter product name: ");
+        String product = sc.nextLine();
+        System.out.print("Enter price: ");
+        double price = sc.nextDouble();
+        sc.nextLine();
+        System.out.print("Enter season (e.g. festive): ");
+        String season = sc.nextLine();
+        System.out.print("Enter customer type (regular/premium/VIP): ");
+        String type = sc.nextLine();
+
+        DiscountCalculator d = new DiscountCalculator();
+        double discount = d.getDiscount(price, type, season);
+        System.out.println("Product: " + product);
+        System.out.println("Discount amount: " + discount);
+        System.out.println("Discounted price: " + (price - discount));
+        sc.close();
+    }
+}
+
+
+2(C) METHOD OVERLOADING TO FIND AREA OF CIRCLE, TRIANGLE AND RECTANGLE
+
+import java.util.Scanner;
+
+class Area {
+    double area(double radius) {
+        return Math.PI * radius * radius;
+    }
+
+    double area(double base, double height) {
+        return 0.5 * base * height;
+    }
+
+    double area(int length, int breadth) {
+        return length * breadth;
+    }
+}
+
+public class AreaOverloadDemo {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Area a = new Area();
+
+        System.out.println("1. Circle");
+        System.out.println("2. Triangle");
+        System.out.println("3. Rectangle");
+        System.out.print("Enter your choice: ");
+        int choice = sc.nextInt();
+
+        switch (choice) {
+            case 1:
+                System.out.print("Enter radius of circle: ");
+                double r = sc.nextDouble();
+                System.out.println("Area of circle: " + a.area(r));
+                break;
+            case 2:
+                System.out.print("Enter base of triangle: ");
+                double base = sc.nextDouble();
+                System.out.print("Enter height of triangle: ");
+                double height = sc.nextDouble();
+                System.out.println("Area of triangle: " + a.area(base, height));
+                break;
+            case 3:
+                System.out.print("Enter length of rectangle: ");
+                int length = sc.nextInt();
+                System.out.print("Enter breadth of rectangle: ");
+                int breadth = sc.nextInt();
+                System.out.println("Area of rectangle: " + a.area(length, breadth));
+                break;
+            default:
+                System.out.println("Invalid choice");
+        }
+        sc.close();
+    }
+}
